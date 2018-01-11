@@ -1,7 +1,7 @@
 import LivechatVisitors from '../models/LivechatVisitors';
 
 Meteor.methods({
-	sendMessageLivechat({ token, _id, rid, msg }, agent) {
+	sendMessageLivechat({ token, _id, rid, msg }, desiredAgent) {
 		check(token, String);
 		check(_id, String);
 		check(rid, String);
@@ -18,6 +18,15 @@ Meteor.methods({
 
 		if (!guest) {
 			throw new Meteor.Error('invalid-token');
+		}
+
+		let agent;
+
+		if (desiredAgent) {
+			agent = {
+				agentId: desiredAgent._id,
+				username: desiredAgent.username
+			};
 		}
 
 		return RocketChat.Livechat.sendMessage({
